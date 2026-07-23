@@ -1,0 +1,13 @@
+asgiref==3.11.1
+cowsay==6.1
+Django==6.0.7
+django-filter==26.1
+djangorestframework==3.17.1
+Markdown==3.10.2
+sqlparse==0.5.5
+tzdata==2026.3
+django-cors-headers==4.1.0
+# django-environ==1.14.0
+# psycopg2-binary==2.9.11
+# PyJWT==2.9.0
+# python-dotenv==1.2.1

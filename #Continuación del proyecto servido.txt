@@ -1,0 +1,317 @@
+# Continuación del proyecto: servidor empresarial con Docker preparado para Kubernetes
+
+Estamos construyendo una plataforma empresarial sobre un servidor Ubuntu usando Docker como primera etapa, con una arquitectura pensada para migrar posteriormente a Kubernetes.
+
+## Estado actual del proyecto
+
+Servidor:
+
+* Ubuntu instalado.
+* Docker funcionando.
+* Docker Compose funcionando.
+* Estructura base creada:
+
+```
+/srv/platform
+
+├── postgresql
+│
+└── odoo
+```
+
+## Red Docker
+
+Existe una red compartida:
+
+```
+database
+```
+
+Esta red será utilizada para comunicación interna entre servicios que necesiten conectarse a bases de datos.
+
+Redes actuales:
+
+* database
+* proxy
+
+## PostgreSQL
+
+Contenedor funcionando:
+
+```
+container_name: postgres
+image: postgres:16
+```
+
+Ubicación:
+
+```
+/srv/platform/postgresql
+```
+
+Configuración:
+
+Usuario administrador PostgreSQL:
+
+```
+jack
+```
+
+Contraseña temporal:
+
+```
+jack
+```
+
+Base inicial:
+
+```
+postgres
+```
+
+El contenedor tiene persistencia mediante:
+
+```
+/srv/platform/postgresql/data
+```
+
+## Odoo
+
+Odoo está funcionando correctamente.
+
+Contenedor:
+
+```
+container_name: odoo
+image: odoo:17
+```
+
+Ubicación:
+
+```
+/srv/platform/odoo
+```
+
+Estructura:
+
+```
+/srv/platform/odoo
+
+├── data
+├── config
+└── addons
+```
+
+Archivo:
+
+```
+/srv/platform/odoo/config/odoo.conf
+```
+
+Configuración actual:
+
+```
+[options]
+
+admin_passwd = admin
+
+db_host = postgres
+db_port = 5432
+db_user = ojack
+db_password = ojack
+
+addons_path = /mnt/extra-addons
+```
+
+Usuario PostgreSQL usado por Odoo:
+
+```
+ojack
+```
+
+Para laboratorio se decidió darle privilegios completos:
+
+```
+SUPERUSER
+CREATEDB
+CREATEROLE
+LOGIN
+```
+
+Comando usado:
+
+```sql
+ALTER USER ojack WITH SUPERUSER CREATEDB CREATEROLE LOGIN;
+```
+
+Odoo quedó operativo después de corregir permisos del volumen:
+
+```bash
+chown -R 101:101 /srv/platform/odoo/data
+chown -R 101:101 /srv/platform/odoo/addons
+```
+
+El problema inicial fue:
+
+```
+PermissionError: [Errno 13] Permission denied: '/var/lib/odoo/.local'
+```
+
+Se solucionó correctamente.
+
+## Arquitectura definida
+
+La idea es NO meter todos los servicios en un solo contenedor.
+
+Cada aplicación tendrá:
+
+* su propio contenedor
+* sus propios datos persistentes
+* su propia configuración
+* su propia base de datos cuando corresponda
+
+Ejemplo futuro:
+
+```
+Docker
+
+├── Odoo
+│    ├── container
+│    ├── PostgreSQL database
+│    └── storage
+│
+├── Nextcloud
+│    ├── container
+│    ├── database propia
+│    └── storage propio
+│
+├── Grafana
+│
+├── Prometheus
+│
+├── Redis
+│
+└── otros servicios
+```
+
+No compartir bases entre aplicaciones salvo que exista una razón concreta.
+
+## Próximos pasos pendientes
+
+Continuar desde aquí:
+
+### 1. Mejorar infraestructura base
+
+* Revisar estructura definitiva de carpetas.
+* Crear estrategia de backups.
+* Configurar variables sensibles con `.env` o secretos.
+* Preparar firewall correctamente.
+* Revisar usuarios y permisos.
+
+### 2. Reverse Proxy
+
+Instalar y configurar:
+
+* Traefik
+
+Objetivo:
+
+```
+Internet
+   |
+   |
+HTTPS
+   |
+Traefik
+   |
+----------------
+|      |       |
+Odoo Nextcloud Grafana
+```
+
+Añadir:
+
+* certificados SSL
+* dominios
+* routing por servicio
+
+### 3. Monitorización
+
+Instalar:
+
+* Prometheus
+* Grafana
+* Node Exporter
+* cAdvisor
+
+Objetivo:
+
+Monitorizar:
+
+* servidor Ubuntu
+* Docker
+* contenedores
+* CPU
+* RAM
+* disco
+* red
+* futuros servicios Kubernetes
+
+### 4. Redis
+
+Preparar Redis para:
+
+* Odoo si aplica
+* Nextcloud
+* cache
+* sesiones
+
+### 5. Nextcloud
+
+Montar:
+
+* contenedor Nextcloud
+* base de datos propia
+* almacenamiento persistente
+* Redis
+* HTTPS mediante Traefik
+
+### 6. Preparación Kubernetes
+
+Después de validar servicios:
+
+* estudiar migración de Docker Compose a Kubernetes
+* crear namespaces
+* deployments
+* services
+* persistent volumes
+* ingress
+* secrets
+* monitoring dentro del cluster
+
+## Objetivo final
+
+Construir una plataforma empresarial escalable:
+
+```
+Servidor físico/VM
+
+        |
+        |
+Docker (fase actual)
+
+        |
+        |
+Kubernetes cluster (fase futura)
+
+        |
+        |
+Servicios empresariales:
+- Odoo
+- Nextcloud
+- Monitorización
+- Bases de datos
+- Aplicaciones futuras
+```
+
+Continuar desde Odoo funcionando correctamente.
