@@ -2,18 +2,24 @@
 This is a full stack project for learning.
 
 Backend: Django
-Frontend: React
+Frontend: React (Web) & React Native (Mobile App)
 
 ## Getting Started
 
 ```bash
 # Backend
-cd Backend\djbackend\testapi
-python manage.py runserver
+cd Backend
+venv\Scripts\activate
+python djbackend/manage.py runserver
 
-# Frontend
-cd Frontend\djfrontend\testapi
+# Frontend (Web)
+cd Frontend/crm-website
 npm run dev
+
+# Frontend (Mobile App - React Native / Expo)
+cd Frontend/crm-mobile
+npm install
+npx expo start
 ```
 
 ## Project Structure
@@ -22,27 +28,21 @@ npm run dev
 Full-Stack-Sandbox/
 ├── Backend/
 │   ├── djbackend/
-│   │   ├── testapi/
-│   │   │   ├── models.py
-│   │   │   ├── serializers.py
-│   │   │   ├── views.py
-│   │   │   ├── scripts/
-│   │   │   │   ├── hello.py
+│   │   ├── api/          # Endpoints para productos y usuarios
 │   │   ├── manage.py
-│   ├── db.sqlite3
-│   └── requirements.txt
+│   ├── requirements.txt
 ├── Frontend/
-│   ├── djfrontend/
-│   │   ├── testapi/
+│   ├── crm-website/     # Frontend Web en React (Vite + Tailwind CSS)
+│   │   ├── src/
 │   │   │   ├── components/
-│   │   │   │   ├── ProductList.js
-│   │   │   │   ├── ProductCreate.js
-│   │   │   │   ├── ProductDetail.js
-│   │   │   │   ├── ProductUpdate.js
-│   │   │   │   ├── ProductDelete.js
-│   │   ├── package.json
-│   ├── node_modules/
-│   └── public/
+│   │   │   ├── App.jsx
+│   ├── crm-mobile/      # Aplicación Móvil en React Native (Expo + twrnc)
+│   │   ├── components/
+│   │   │   ├── Card.js
+│   │   │   ├── Menu.js
+│   │   │   ├── Background.js
+│   │   ├── App.js
+│   │   ├── config.js
+│   │   ├── README.md    # Instrucciones específicas para compilar APK y correr la app
 └── README.md
 ```
-
