@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from testapi.views import SayHi, TestUsersViewSet, ProductViewSet
+from testapi.views import SayHi, TestUsersViewSet, ProductViewSet, start_script
+
 
 router = DefaultRouter()
 router.register(r'users', TestUsersViewSet, basename='testusers')
@@ -28,6 +29,7 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path("SayHi/", SayHi),
     path('api/', include(router.urls)),
+    path('startscript/', start_script),
 ]
 
 
